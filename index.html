@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agadir Property Manager</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.19.0/iconfont/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F0F4F8;--bg2:#fff;--bg3:#E8EDF2;
+  --text:#1A1A2E;--text2:#4A5568;--text3:#94A3B8;
+  --border:#E2E8F0;--border2:#CBD5E0;
+  --blue:#1A3A5C;--mid:#2E6DA4;--accent:#3498DB;
+  --green:#1E8449;--orange:#E67E22;--red:#C0392B;
+  --lgreen:#D5F5E3;--lorange:#FEF9E7;--lred:#FADBD8;--lblue:#D6EAF8;
+  --gh25:#1A5276;--gh26:#145A32;
+  --radius:10px;--radius-sm:6px;
+}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.app{max-width:480px;margin:0 auto;padding-bottom:2rem}
+/* HEADER */
+.hdr{background:var(--blue);color:#fff;padding:1.1rem 1.1rem 0;border-radius:0 0 var(--radius) var(--radius);box-shadow:0 4px 20px rgba(26,58,92,.25)}
+.hdr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.hdr h1{font-size:17px;font-weight:600;letter-spacing:.2px}
+.hdr p{font-size:11px;color:#AED6F1;margin-bottom:10px}
+.hdr-rev{text-align:right}
+.hdr-rev .amount{font-size:20px;font-weight:600}
+.hdr-rev .label{font-size:10px;color:#AED6F1}
+.tabs{display:flex;gap:2px}
+.tab{flex:1;padding:7px 2px;font-size:11px;border:none;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);border-radius:var(--radius-sm) var(--radius-sm) 0 0;cursor:pointer;font-family:inherit;transition:all .15s}
+.tab.on{background:#fff;color:var(--blue);font-weight:600}
+/* BODY */
+.body{padding:.85rem}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:.85rem}
+.stat{background:var(--bg2);border-radius:var(--radius);padding:.85rem 1rem;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.stat-l{font-size:11px;color:var(--text2);margin-bottom:4px}
+.stat-v{font-size:24px;font-weight:600}
+.sv-b{color:var(--blue)}.sv-g{color:var(--green)}.sv-o{color:var(--orange)}
+/* SECTION TITLE */
+.sec{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin:1rem 0 .5rem}
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:.85rem 1rem;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:border-color .15s}
+.card.exp{border-color:var(--accent)}
+.card:hover{border-color:var(--border2)}
+.crow{display:flex;align-items:center;gap:10px;cursor:pointer}
+.aico{width:36px;height:36px;border-radius:var(--radius-sm);background:#EBF5FB;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--blue);font-size:18px}
+.aico.g26{background:#D5F5E3;color:var(--green)}
+.inf{flex:1;min-width:0}
+.iname{font-size:13px;font-weight:600;color:var(--text)}
+.isub{font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+/* BADGES */
+.bdg{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:600;white-space:nowrap}
+.b25{background:#D6EAF8;color:var(--gh25)}.b26{background:#D5F5E3;color:var(--gh26)}
+.bok{background:#D5F5E3;color:var(--green)}.bpd{background:#FEF9E7;color:#B7770D}.bcn{background:#FADBD8;color:var(--red)}
+/* DETAIL */
+.det{display:none;margin-top:.85rem;padding-top:.85rem;border-top:1px solid var(--border)}
+.card.exp .det{display:block}
+.dgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:.75rem}
+.di .dl{font-size:11px;color:var(--text3);margin-bottom:2px}
+.di .dv{font-size:12px;font-weight:600;color:var(--text)}
+.tag{display:inline-block;background:#EBF5FB;color:var(--blue);font-size:10px;padding:3px 8px;border-radius:20px;margin:2px;font-weight:500}
+/* BUTTONS */
+.btns{display:flex;gap:6px;margin-top:.85rem}
+.btn{flex:1;padding:8px 6px;font-size:12px;border:1px solid var(--border2);background:var(--bg2);border-radius:var(--radius-sm);cursor:pointer;color:var(--text);font-family:inherit;font-weight:500;transition:all .15s}
+.btn:hover{background:var(--bg3)}
+.bpri{background:var(--blue);color:#fff;border-color:var(--blue)}
+.bpri:hover{background:var(--mid)}
+.bsm{padding:6px 10px;font-size:11px}
+/* PHOTOS */
+.pgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:.6rem}
+.pbox{aspect-ratio:4/3;border-radius:var(--radius-sm);border:1.5px dashed var(--border2);background:var(--bg3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;overflow:hidden;position:relative;transition:border-color .15s}
+.pbox:hover{border-color:var(--accent)}
+.pbox img{width:100%;height:100%;object-fit:cover;position:absolute;border-radius:var(--radius-sm)}
+.pbox .plbl{font-size:10px;color:var(--text3);z-index:1}
+.pbox .pdel{position:absolute;top:5px;right:5px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center}
+input[type=file]{display:none}
+/* RES CARDS */
+.rcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:.85rem 1rem;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.rt{display:flex;justify-content:space-between;align-items:flex-start}
+.rn{font-size:13px;font-weight:600;color:var(--text)}
+.ra{font-size:11px;color:var(--text2);margin-top:1px}
+.rd{font-size:11px;color:var(--text2);margin-top:5px}
+.rm{font-size:14px;font-weight:600;color:var(--blue);margin-top:3px}
+/* ADD BUTTON */
+.addbtn{width:100%;padding:.85rem;background:var(--blue);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:.5rem;font-weight:600;transition:background .15s;box-shadow:0 2px 8px rgba(26,58,92,.2)}
+.addbtn:hover{background:var(--mid)}
+/* FORM */
+.fwrap{background:var(--bg2);border:1px solid var(--accent);border-radius:var(--radius);padding:1rem;margin-bottom:8px;display:none;box-shadow:0 4px 16px rgba(52,152,219,.12)}
+.fwrap.show{display:block}
+.ftitle{font-size:13px;font-weight:600;color:var(--text);margin-bottom:.85rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+.fr{margin-bottom:.65rem}
+.fr label{font-size:11px;color:var(--text2);display:block;margin-bottom:3px;font-weight:500}
+.fr input,.fr select,.fr textarea{width:100%;font-size:12px;font-family:inherit;border:1px solid var(--border2);border-radius:var(--radius-sm);padding:7px 10px;background:var(--bg2);color:var(--text);outline:none;transition:border-color .15s}
+.fr input:focus,.fr select:focus,.fr textarea:focus{border-color:var(--accent)}
+.fr textarea{height:56px;resize:vertical}
+.f2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+/* FILTER */
+.frow{display:flex;gap:6px;margin-bottom:.85rem;overflow-x:auto;padding-bottom:2px;-ms-overflow-style:none;scrollbar-width:none}
+.frow::-webkit-scrollbar{display:none}
+.fchip{padding:6px 14px;font-size:11px;border:1px solid var(--border2);border-radius:20px;background:var(--bg2);cursor:pointer;color:var(--text2);white-space:nowrap;font-family:inherit;font-weight:500;transition:all .15s}
+.fchip.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* MESSAGES */
+.mc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:.85rem 1rem;margin-bottom:8px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:border-color .15s}
+.mc.exp{border-color:var(--accent)}
+.mt{font-size:13px;font-weight:600;color:var(--text)}
+.mp{font-size:11px;color:var(--text2);margin-top:3px}
+.mb{white-space:pre-line;font-size:12px;color:var(--text);line-height:1.7;margin-top:.85rem;padding-top:.85rem;border-top:1px solid var(--border);display:none}
+.mc.exp .mb{display:block}
+.lt{display:flex;gap:4px;margin-top:8px}
+.lb{padding:4px 12px;font-size:11px;border:1px solid var(--border2);border-radius:20px;background:transparent;cursor:pointer;color:var(--text2);font-family:inherit;font-weight:500}
+.lb.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* CALENDAR */
+.cal-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+.cal-nav button{border:none;background:var(--bg3);cursor:pointer;color:var(--text2);font-size:16px;padding:5px 10px;border-radius:var(--radius-sm)}
+.cal-nav span{font-size:14px;font-weight:600;color:var(--text)}
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin:.5rem 0}
+.ch{font-size:10px;text-align:center;color:var(--text3);padding:3px 0;font-weight:600}
+.cd{font-size:11px;text-align:center;padding:5px 2px;border-radius:var(--radius-sm);color:var(--text);cursor:default}
+.cd.booked{background:var(--lgreen);color:var(--green);font-weight:600}
+.cd.today{background:var(--blue);color:#fff;font-weight:600}
+.cd.past{color:var(--text3)}
+/* CLEANING */
+.clcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:.85rem 1rem;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.cltop{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+.clrow{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--text)}
+.clrow:last-child{border-bottom:none}
+.clrow.done{color:var(--text3);text-decoration:line-through}
+.clrow input[type=checkbox]{width:16px;height:16px;flex-shrink:0;accent-color:var(--blue)}
+/* TOGGLE */
+.tgsw{width:38px;height:22px;background:var(--border2);border-radius:20px;position:relative;cursor:pointer;flex-shrink:0;transition:background .2s}
+.tgsw.on{background:var(--blue)}
+.tgsw::after{content:'';width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tgsw.on::after{left:18px}
+.nrow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+.nrow:last-child{border-bottom:none}
+/* ICAL */
+.ib{background:var(--bg3);border-radius:var(--radius-sm);padding:.7rem .85rem;margin-bottom:6px;border:1px solid var(--border)}
+.il{font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:500}
+.ir{display:flex;gap:6px}
+.ir input{flex:1;font-size:11px;font-family:inherit;border:1px solid var(--border2);border-radius:var(--radius-sm);padding:6px 8px;background:var(--bg2);outline:none}
+.ir input:focus{border-color:var(--accent)}
+.isn{font-size:10px;color:var(--green);margin-top:4px;font-weight:500}
+/* QA */
+.qaGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:.85rem}
+.qa{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:.85rem;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.qa:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(52,152,219,.1)}
+.qai{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.qat{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
+.qas{font-size:10px;color:var(--text2)}
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;padding:10px 20px;border-radius:var(--radius);font-size:12px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2);font-weight:500}
+.toast.show{opacity:1}
+/* EMPTY */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--text3);font-size:12px}
+.empty i{font-size:32px;display:block;margin-bottom:.6rem;color:var(--text3)}
+/* OPS TABS */
+#ops-clean,#ops-ical,#ops-notify{display:none}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="app">
+<div class="hdr">
+  <div class="hdr-top">
+    <div><h1><i class="ti ti-building"></i> Agadir Manager</h1><p id="hdr-sub">19 apartments · GH 25 & GH 26</p></div>
+    <div class="hdr-rev"><div class="amount" id="hdr-rev">0 MAD</div><div class="label">this month</div></div>
+  </div>
+  <div class="tabs">
+    <button class="tab on" onclick="go('dash')">Home</button>
+    <button class="tab" onclick="go('apts')">Apartments</button>
+    <button class="tab" onclick="go('book')">Bookings</button>
+    <button class="tab" onclick="go('ops')">Operations</button>
+    <button class="tab" onclick="go('msgs')">Messages</button>
+  </div>
+</div>
+<div class="body">
+
+<!-- DASHBOARD -->
+<div id="p-dash">
+  <div class="stats">
+    <div class="stat"><div class="stat-l">Confirmed</div><div class="stat-v sv-g" id="s-conf">0</div></div>
+    <div class="stat"><div class="stat-l">Available</div><div class="stat-v sv-b" id="s-avail">19</div></div>
+    <div class="stat"><div class="stat-l">Pending</div><div class="stat-v sv-o" id="s-pend">0</div></div>
+    <div class="stat"><div class="stat-l">Total revenue</div><div class="stat-v sv-b" id="s-rev">0 MAD</div></div>
+  </div>
+  <div class="sec">Quick actions</div>
+  <div class="qaGrid">
+    <div class="qa" onclick="go('book');showForm()"><div class="qai" style="background:#EBF5FB;color:var(--blue)"><i class="ti ti-plus"></i></div><div><div class="qat">Add booking</div><div class="qas">New reservation</div></div></div>
+    <div class="qa" onclick="go('ops');opsTab('clean')"><div class="qai" style="background:#D5F5E3;color:var(--green)"><i class="ti ti-wash"></i></div><div><div class="qat">Cleaning</div><div class="qas">Today's tasks</div></div></div>
+    <div class="qa" onclick="go('ops');opsTab('cal')"><div class="qai" style="background:#FEF9E7;color:#B7770D"><i class="ti ti-calendar"></i></div><div><div class="qat">Calendar</div><div class="qas">Availability</div></div></div>
+    <div class="qa" onclick="go('msgs')"><div class="qai" style="background:#FADBD8;color:var(--red)"><i class="ti ti-message"></i></div><div><div class="qat">Messages</div><div class="qas">Copy templates</div></div></div>
+  </div>
+  <div class="sec">Upcoming check-ins</div>
+  <div id="d-upcoming"></div>
+  <div class="sec">Recent bookings</div>
+  <div id="d-recent"></div>
+</div>
+
+<!-- APARTMENTS -->
+<div id="p-apts" style="display:none">
+  <div class="frow">
+    <button class="fchip on" onclick="fApt('all',this)">All (19)</button>
+    <button class="fchip" onclick="fApt('GH 25',this)">GH 25 (11)</button>
+    <button class="fchip" onclick="fApt('GH 26',this)">GH 26 (8)</button>
+    <button class="fchip" onclick="fApt('view',this)">Special view</button>
+  </div>
+  <div id="apt-list"></div>
+</div>
+
+<!-- BOOKINGS -->
+<div id="p-book" style="display:none">
+  <div class="fwrap" id="res-form">
+    <div class="ftitle"><i class="ti ti-calendar-plus"></i> New reservation</div>
+    <div class="fr"><label>Apartment</label><select id="f-apt"></select></div>
+    <div class="fr"><label>Guest name</label><input type="text" id="f-guest" placeholder="Ahmed Alami"></div>
+    <div class="fr"><label>Phone / WhatsApp</label><input type="text" id="f-contact" placeholder="0661234567"></div>
+    <div class="f2"><div class="fr"><label>Check-in</label><input type="date" id="f-in"></div><div class="fr"><label>Check-out</label><input type="date" id="f-out"></div></div>
+    <div class="f2">
+      <div class="fr"><label>Platform</label><select id="f-plat"><option>Airbnb</option><option>Booking.com</option><option>Direct</option><option>WhatsApp</option></select></div>
+      <div class="fr"><label>Price/night (MAD)</label><input type="number" id="f-price" placeholder="500"></div>
+    </div>
+    <div class="fr"><label>Status</label><select id="f-status"><option>Confirmed</option><option>Pending</option><option>Cancelled</option></select></div>
+    <div class="fr"><label>Notes</label><textarea id="f-notes" placeholder="Special requests..."></textarea></div>
+    <div class="btns"><button class="btn" onclick="hideForm()">Cancel</button><button class="btn bpri" onclick="saveRes()">Save booking</button></div>
+  </div>
+  <div class="frow">
+    <button class="fchip on" onclick="fRes('all',this)">All</button>
+    <button class="fchip" onclick="fRes('Confirmed',this)">Confirmed</button>
+    <button class="fchip" onclick="fRes('Pending',this)">Pending</button>
+    <button class="fchip" onclick="fRes('Cancelled',this)">Cancelled</button>
+  </div>
+  <div id="res-list"></div>
+  <button class="addbtn" onclick="showForm()"><i class="ti ti-plus"></i> Add reservation</button>
+</div>
+
+<!-- OPERATIONS -->
+<div id="p-ops" style="display:none">
+  <div class="frow">
+    <button class="fchip on" onclick="opsTab('cal',this)">Calendar</button>
+    <button class="fchip" onclick="opsTab('clean',this)">Cleaning</button>
+    <button class="fchip" onclick="opsTab('ical',this)">iCal Sync</button>
+    <button class="fchip" onclick="opsTab('notify',this)">Reminders</button>
+  </div>
+  <div id="ops-cal">
+    <div class="cal-wrap">
+      <div class="cal-nav"><button onclick="chMo(-1)"><i class="ti ti-chevron-left"></i></button><span id="cal-title"></span><button onclick="chMo(1)"><i class="ti ti-chevron-right"></i></button></div>
+      <div class="cgrid" id="cal-days"></div>
+      <div id="cal-leg" style="font-size:11px;color:var(--text3);margin-top:.5rem"></div>
+    </div>
+  </div>
+  <div id="ops-clean"><div id="clean-list"></div></div>
+  <div id="ops-ical">
+    <div style="font-size:12px;color:var(--text2);margin-bottom:.85rem;line-height:1.7;background:var(--bg2);padding:.85rem 1rem;border-radius:var(--radius);border:1px solid var(--border)">
+      <strong>How to get your iCal link:</strong><br>
+      <b>Airbnb:</b> Listing → Availability → Export Calendar → Copy link<br>
+      <b>Booking.com:</b> Extranet → Calendar → Sync calendars → Copy link
+    </div>
+    <div id="ical-list"></div>
+  </div>
+  <div id="ops-notify">
+    <div class="card">
+      <div class="nrow"><div><div style="font-size:12px;font-weight:600">Booking confirmation</div><div style="font-size:10px;color:var(--text2)">Send immediately after booking</div></div><div class="tgsw on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="nrow"><div><div style="font-size:12px;font-weight:600">Pre-arrival instructions</div><div style="font-size:10px;color:var(--text2)">Send 48h before check-in</div></div><div class="tgsw on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="nrow"><div><div style="font-size:12px;font-weight:600">Welcome message</div><div style="font-size:10px;color:var(--text2)">Send on check-in day</div></div><div class="tgsw on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="nrow"><div><div style="font-size:12px;font-weight:600">Check-out reminder</div><div style="font-size:10px;color:var(--text2)">Send evening before</div></div><div class="tgsw on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="nrow"><div><div style="font-size:12px;font-weight:600">Review request</div><div style="font-size:10px;color:var(--text2)">Send 1 day after check-out</div></div><div class="tgsw" onclick="this.classList.toggle('on')"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MESSAGES -->
+<div id="p-msgs" style="display:none"><div id="msg-list"></div></div>
+
+</div>
+</div>
+
+<script>
+const APTS=[
+  {id:1,no:"Apt 48",bldg:"Imm 154",res:"GH 25",view:""},
+  {id:2,no:"Apt 60",bldg:"Imm 156",res:"GH 25",view:""},
+  {id:3,no:"Apt 46",bldg:"Imm 156",res:"GH 25",view:""},
+  {id:4,no:"Apt 58",bldg:"Imm 156",res:"GH 25",view:""},
+  {id:5,no:"Apt 52",bldg:"Imm 156",res:"GH 25",view:""},
+  {id:6,no:"Apt 57",bldg:"Imm 156",res:"GH 25",view:""},
+  {id:7,no:"Apt 54",bldg:"Imm 156",res:"GH 25",view:""},
+  {id:8,no:"Apt 27",bldg:"Imm 156",res:"GH 25",view:""},
+  {id:9,no:"Apt 57",bldg:"Imm 152",res:"GH 25",view:"Mountain view"},
+  {id:10,no:"Apt 38",bldg:"Imm 153",res:"GH 25",view:""},
+  {id:11,no:"Apt 39",bldg:"Imm 153",res:"GH 25",view:""},
+  {id:12,no:"Apt 14",bldg:"Imm 167",res:"GH 26",view:""},
+  {id:13,no:"Apt 45",bldg:"Imm 165",res:"GH 26",view:""},
+  {id:14,no:"Apt 32",bldg:"Imm 163",res:"GH 26",view:""},
+  {id:15,no:"Apt 51",bldg:"Imm 164",res:"GH 26",view:""},
+  {id:16,no:"Apt 39",bldg:"Imm 166",res:"GH 26",view:""},
+  {id:17,no:"Apt 63",bldg:"Imm 165",res:"GH 26",view:"Panoramic"},
+  {id:18,no:"Apt 39",bldg:"Imm 165",res:"GH 26",view:""},
+  {id:19,no:"Apt 51",bldg:"Imm 163",res:"GH 26",view:""},
+];
+
+const MSGS=[
+  {t:"Booking confirmation",fr:"Bonjour [Prénom] 🌟\n\nMerci pour votre réservation ! Nous avons bien reçu votre demande pour [APT] du [ARRIVÉE] au [DÉPART].\n\nNous vous enverrons les instructions 48h avant le check-in.\n\nÀ bientôt !",en:"Hello [Name] 🌟\n\nThank you for your booking! We received your reservation for [APT] from [CHECK-IN] to [CHECK-OUT].\n\nWe'll send arrival instructions 48h before check-in.\n\nSee you soon!"},
+  {t:"Pre-arrival (48h before)",fr:"Bonjour [Prénom] 🏠\n\nVotre séjour approche ! Infos d'arrivée :\n\n📍 Résidence [GH25/GH26], [IMMEUBLE], [APT]\n🕐 Check-in : à partir de 14h00\n🔑 Code : [CODE]\n📶 WiFi : [NOM] / Mdp : [MDP]\n📞 Urgences : [NUMÉRO]\n\nBon voyage ! ✈️",en:"Hello [Name] 🏠\n\nYour stay is coming up! Arrival details:\n\n📍 Residence [GH25/GH26], [BUILDING], [APT]\n🕐 Check-in: from 2:00 PM\n🔑 Code: [CODE]\n📶 WiFi: [NAME] / Password: [PWD]\n📞 Emergencies: [NUMBER]\n\nSafe travels! ✈️"},
+  {t:"Welcome message",fr:"Bienvenue [Prénom] ! 🎉\n\n🛏️ 2 chambres — Linge fourni\n🍳 Cuisine équipée\n❄️ Climatisation\n🏊 Piscine : [horaires]\n🚗 Parking : [emplacement]\n\nContactez-nous pour quoi que ce soit. Profitez d'Agadir ! 🌊",en:"Welcome [Name]! 🎉\n\n🛏️ 2 bedrooms — Linen provided\n🍳 Fully equipped kitchen\n❄️ AC available\n🏊 Pool: [schedule]\n🚗 Parking: [location]\n\nContact us anytime. Enjoy Agadir! 🌊"},
+  {t:"Check-out reminder",fr:"Bonjour [Prénom] 👋\n\nJ'espère que vous avez passé un excellent séjour !\n\nRappel : check-out demain à 11h00.\nMerci de laisser les clés [instructions].\n\nUn avis serait très apprécié 🙏",en:"Hello [Name] 👋\n\nHope you had a great stay!\n\nReminder: check-out tomorrow at 11:00 AM.\nPlease leave the keys [instructions].\n\nA review would mean a lot 🙏"},
+  {t:"Review request",fr:"Bonjour [Prénom] ⭐\n\nMerci pour votre séjour ! Votre avis aide d'autres voyageurs à choisir leur logement à Agadir.\n\nPourriez-vous laisser un commentaire en 2 min ? 🙏",en:"Hello [Name] ⭐\n\nThank you for your stay! Your review helps other travelers find great accommodation in Agadir.\n\nCould you take 2 min to leave a review? 🙏"},
+  {t:"Complaint response",fr:"Bonjour [Prénom],\n\nNous sommes vraiment désolés pour ce désagrément. Nous prenons votre retour très au sérieux.\n\nPouvez-vous nous appeler au [NUMÉRO] ? Nous allons régler ça immédiatement.\n\nToutes nos excuses.",en:"Hello [Name],\n\nWe are truly sorry about this. We take your feedback very seriously.\n\nPlease call us at [NUMBER] and we'll sort this out immediately.\n\nSincerest apologies."},
+  {t:"Late check-out decline",fr:"Bonjour [Prénom],\n\nMalheureusement nous ne pouvons pas garantir un late check-out car un autre client arrive.\n\nNous pouvons garder vos bagages jusqu'à [HEURE] si besoin.\n\nMerci de votre compréhension.",en:"Hello [Name],\n\nUnfortunately we can't offer a late check-out as another guest is arriving.\n\nWe can store your luggage until [TIME] if needed.\n\nThank you for understanding."},
+];
+
+const CTASKS=["Change & wash all bed linen","Clean bathrooms (toilet, shower, sink)","Mop all floors","Clean kitchen & appliances","Restock toiletries & supplies","Empty all trash bins","Check AC filters & remote","Inspect apartment for damage","Take photos of apartment","Leave welcome items for next guest"];
+
+let S={
+  res:JSON.parse(localStorage.getItem('ag_res')||'[]'),
+  photos:JSON.parse(localStorage.getItem('ag_ph')||'{}'),
+  ical:JSON.parse(localStorage.getItem('ag_ic')||'{}'),
+  clean:JSON.parse(localStorage.getItem('ag_cl')||'{}'),
+  eApt:null,eMsg:null,mLang:{},
+  rFilter:'all',aFilter:'all',
+  cMo:new Date().getMonth(),cYr:new Date().getFullYear()
+};
+
+function sv(){try{localStorage.setItem('ag_res',JSON.stringify(S.res));localStorage.setItem('ag_ph',JSON.stringify(S.photos));localStorage.setItem('ag_ic',JSON.stringify(S.ical));localStorage.setItem('ag_cl',JSON.stringify(S.clean));}catch(e){}}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function fmt(d){if(!d)return'—';const[y,mo,day]=d.split('-');return`${day}/${mo}/${y}`;}
+function nts(a,b){return Math.round((new Date(b)-new Date(a))/864e5);}
+function thisMo(r){const n=new Date(),d=new Date(r.checkIn);return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();}
+
+function go(p){
+  ['dash','apts','book','ops','msgs'].forEach(x=>document.getElementById('p-'+x).style.display='none');
+  document.getElementById('p-'+p).style.display='block';
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('on',['dash','apts','book','ops','msgs'][i]===p));
+  if(p==='dash') rDash();
+  if(p==='apts') rApts();
+  if(p==='book') rRes();
+  if(p==='ops'){rCal();rClean();rIcal();}
+  if(p==='msgs') rMsgs();
+}
+
+function rDash(){
+  const conf=S.res.filter(r=>r.status==='Confirmed');
+  const pend=S.res.filter(r=>r.status==='Pending');
+  const rev=S.res.reduce((s,r)=>r.status==='Confirmed'?s+r.total:s,0);
+  const mrev=conf.filter(thisMo).reduce((s,r)=>s+r.total,0);
+  document.getElementById('s-conf').textContent=conf.length;
+  document.getElementById('s-avail').textContent=APTS.length-conf.length;
+  document.getElementById('s-pend').textContent=pend.length;
+  document.getElementById('s-rev').textContent=rev.toLocaleString()+' MAD';
+  document.getElementById('hdr-rev').textContent=mrev.toLocaleString()+' MAD';
+  const today=new Date().toISOString().split('T')[0];
+  const up=conf.filter(r=>r.checkIn>=today).sort((a,b)=>a.checkIn.localeCompare(b.checkIn)).slice(0,3);
+  document.getElementById('d-upcoming').innerHTML=up.length?up.map(miniCard).join(''):'<div class="empty"><i class="ti ti-calendar-off"></i>No upcoming check-ins</div>';
+  const rec=[...S.res].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,3);
+  document.getElementById('d-recent').innerHTML=rec.length?rec.map(miniCard).join(''):'<div class="empty"><i class="ti ti-clock"></i>No bookings yet</div>';
+}
+
+function miniCard(r){
+  const bc=r.status==='Confirmed'?'bok':r.status==='Pending'?'bpd':'bcn';
+  return`<div class="rcard"><div class="rt"><div><div class="rn">${r.guest}</div><div class="ra">${r.apt}</div></div><span class="bdg ${bc}">${r.status}</span></div><div class="rd"><i class="ti ti-calendar"></i> ${fmt(r.checkIn)} → ${fmt(r.checkOut)} · ${r.nights}n</div><div class="rm">${r.total.toLocaleString()} MAD · ${r.platform}</div></div>`;
+}
+
+function fApt(f,el){S.aFilter=f;document.querySelectorAll('#p-apts .fchip').forEach(c=>c.classList.remove('on'));el.classList.add('on');rApts();}
+
+function rApts(){
+  let list=APTS;
+  if(S.aFilter==='GH 25') list=APTS.filter(a=>a.res==='GH 25');
+  else if(S.aFilter==='GH 26') list=APTS.filter(a=>a.res==='GH 26');
+  else if(S.aFilter==='view') list=APTS.filter(a=>a.view);
+  document.getElementById('apt-list').innerHTML=list.map(a=>{
+    const exp=S.eApt===a.id;
+    const conf=S.res.filter(r=>r.aptId===a.id&&r.status==='Confirmed').length;
+    return`<div class="card${exp?' exp':''}" id="ac-${a.id}">
+      <div class="crow" onclick="tgApt(${a.id})">
+        <div class="aico${a.res==='GH 26'?' g26':''}"><i class="ti ti-door"></i></div>
+        <div class="inf"><div class="iname">${a.no}${a.view?' ★':''} · ${a.bldg}</div><div class="isub">${a.res}${a.view?' · '+a.view:''}</div></div>
+        <span class="bdg ${a.res==='GH 25'?'b25':'b26'}">${a.res}</span>
+      </div>
+      <div class="det">
+        <div class="dgrid">
+          <div class="di"><div class="dl">Confirmed bookings</div><div class="dv">${conf}</div></div>
+          <div class="di"><div class="dl">Bedrooms</div><div class="dv">2</div></div>
+          <div class="di"><div class="dl">Low season</div><div class="dv">300–400 MAD/n</div></div>
+          <div class="di"><div class="dl">High season</div><div class="dv">550–700 MAD/n</div></div>
+        </div>
+        ${a.view?`<div style="margin-bottom:6px"><span class="tag">⭐ ${a.view}</span></div>`:''}
+        <div><span class="tag">Pool</span><span class="tag">WiFi</span><span class="tag">Parking</span><span class="tag">AC</span><span class="tag">Elevator</span><span class="tag">Kitchen</span></div>
+        <div style="font-size:11px;font-weight:600;color:var(--text3);margin:.75rem 0 .4rem;text-transform:uppercase;letter-spacing:.4px">Photos</div>
+        <div class="pgrid" id="pg-${a.id}">${rPh(a.id)}</div>
+        <div class="btns" style="margin-top:.85rem">
+          <button class="btn bsm" onclick="event.stopPropagation();obf(${a.id})">+ Booking</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function rPh(id){
+  const ph=S.photos[id]||[];
+  let h=ph.map((p,i)=>`<div class="pbox"><img src="${p}" alt="photo"><button class="pdel" onclick="event.stopPropagation();dPh(${id},${i})">✕</button></div>`).join('');
+  if(ph.length<6) h+=`<div class="pbox" onclick="event.stopPropagation();document.getElementById('up-${id}').click()"><i class="ti ti-camera-plus" style="font-size:22px;color:var(--text3)"></i><div class="plbl">Add photo</div><input type="file" id="up-${id}" accept="image/*" multiple onchange="hPh(event,${id})"></div>`;
+  return h;
+}
+function hPh(ev,id){const files=Array.from(ev.target.files);if(!S.photos[id])S.photos[id]=[];let n=0;files.forEach(f=>{const r=new FileReader();r.onload=e=>{S.photos[id].push(e.target.result);n++;if(n===files.length){sv();document.getElementById('pg-'+id).innerHTML=rPh(id);}};r.readAsDataURL(f);});}
+function dPh(id,i){S.photos[id].splice(i,1);sv();document.getElementById('pg-'+id).innerHTML=rPh(id);}
+function tgApt(id){S.eApt=S.eApt===id?null:id;rApts();}
+
+function fRes(f,el){S.rFilter=f;document.querySelectorAll('#p-book .fchip').forEach(c=>c.classList.remove('on'));el.classList.add('on');rRes();}
+
+function rRes(){
+  let list=S.rFilter==='all'?S.res:S.res.filter(r=>r.status===S.rFilter);
+  list=[...list].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  const bc=r=>r.status==='Confirmed'?'bok':r.status==='Pending'?'bpd':'bcn';
+  document.getElementById('res-list').innerHTML=list.length?list.map((r,i)=>`
+    <div class="rcard">
+      <div class="rt"><div><div class="rn">${r.guest}</div><div class="ra">${r.apt}</div></div><span class="bdg ${bc(r)}">${r.status}</span></div>
+      <div class="rd"><i class="ti ti-calendar"></i> ${fmt(r.checkIn)} → ${fmt(r.checkOut)} · ${r.nights} nights</div>
+      <div class="rm">${r.total.toLocaleString()} MAD · ${r.platform}</div>
+      ${r.contact?`<div style="font-size:11px;color:var(--text2);margin-top:3px"><i class="ti ti-phone"></i> ${r.contact}</div>`:''}
+      ${r.notes?`<div style="font-size:11px;color:var(--text2);margin-top:2px;font-style:italic">${r.notes}</div>`:''}
+      <div style="display:flex;gap:6px;margin-top:.6rem">
+        <button class="btn bsm" onclick="delR(${S.res.indexOf(r)})">Delete</button>
+      </div>
+    </div>`).join(''):'<div class="empty"><i class="ti ti-calendar-off"></i>No reservations found</div>';
+}
+
+function showForm(){document.getElementById('res-form').classList.add('show');document.getElementById('f-apt').innerHTML=APTS.map(a=>`<option value="${a.id}">${a.no} · ${a.bldg} · ${a.res}</option>`).join('');}
+function hideForm(){document.getElementById('res-form').classList.remove('show');}
+function obf(id){go('book');showForm();document.getElementById('f-apt').value=id;}
+
+function saveRes(){
+  const aptId=parseInt(document.getElementById('f-apt').value);
+  const apt=APTS.find(a=>a.id===aptId);
+  const ci=document.getElementById('f-in').value;
+  const co=document.getElementById('f-out').value;
+  const price=parseFloat(document.getElementById('f-price').value)||0;
+  const guest=document.getElementById('f-guest').value.trim();
+  if(!guest||!ci||!co){toast('Please fill guest name, check-in and check-out');return;}
+  const n=nts(ci,co);
+  if(n<=0){toast('Check-out must be after check-in');return;}
+  S.res.push({aptId,apt:`${apt.no} · ${apt.bldg} · ${apt.res}`,guest,contact:document.getElementById('f-contact').value,checkIn:ci,checkOut:co,nights:n,total:Math.round(n*price),platform:document.getElementById('f-plat').value,status:document.getElementById('f-status').value,notes:document.getElementById('f-notes').value,createdAt:new Date().toISOString()});
+  sv();hideForm();rRes();rDash();toast('Booking saved!');
+}
+function delR(i){if(confirm('Delete this reservation?')){S.res.splice(i,1);sv();rRes();rDash();}}
+
+function opsTab(tab,el){
+  ['cal','clean','ical','notify'].forEach(t=>document.getElementById('ops-'+t).style.display=t===tab?'block':'none');
+  document.querySelectorAll('#p-ops .fchip').forEach(c=>c.classList.remove('on'));
+  if(el) el.classList.add('on');
+  else document.querySelectorAll('#p-ops .fchip')[['cal','clean','ical','notify'].indexOf(tab)].classList.add('on');
+  if(tab==='cal') rCal();
+  if(tab==='clean') rClean();
+  if(tab==='ical') rIcal();
+}
+
+function rCal(){
+  const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-title').textContent=MN[S.cMo]+' '+S.cYr;
+  const days=['Mo','Tu','We','Th','Fr','Sa','Su'];
+  const first=new Date(S.cYr,S.cMo,1).getDay();
+  const off=first===0?6:first-1;
+  const total=new Date(S.cYr,S.cMo+1,0).getDate();
+  const today=new Date();
+  const booked={};
+  S.res.filter(r=>r.status==='Confirmed').forEach(r=>{let d=new Date(r.checkIn);const end=new Date(r.checkOut);while(d<end){const k=d.toISOString().split('T')[0];if(!booked[k])booked[k]=[];booked[k].push(r.apt.split('·')[0].trim());d.setDate(d.getDate()+1);}});
+  let h=days.map(d=>`<div class="ch">${d}</div>`).join('');
+  for(let i=0;i<off;i++) h+=`<div></div>`;
+  for(let d=1;d<=total;d++){
+    const ds=`${S.cYr}-${String(S.cMo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isT=d===today.getDate()&&S.cMo===today.getMonth()&&S.cYr===today.getFullYear();
+    const isP=new Date(ds)<today&&!isT;
+    const bk=booked[ds];
+    h+=`<div class="cd ${isT?'today':bk?'booked':isP?'past':''}"${bk?` title="${bk.join(', ')}"`:''}>${d}</div>`;
+  }
+  document.getElementById('cal-days').innerHTML=h;
+  const bc=Object.keys(booked).filter(d=>{const dt=new Date(d);return dt.getMonth()===S.cMo&&dt.getFullYear()===S.cYr;}).length;
+  document.getElementById('cal-leg').innerHTML=`<span style="display:inline-block;width:10px;height:10px;background:var(--lgreen);border-radius:2px;margin-right:4px;vertical-align:middle"></span>Booked: ${bc} days this month`;
+}
+function chMo(d){S.cMo+=d;if(S.cMo>11){S.cMo=0;S.cYr++;}if(S.cMo<0){S.cMo=11;S.cYr--;}rCal();}
+
+function rClean(){
+  const today=new Date().toISOString().split('T')[0];
+  const co=S.res.filter(r=>r.status==='Confirmed'&&r.checkOut>=today).sort((a,b)=>a.checkOut.localeCompare(b.checkOut)).slice(0,6);
+  document.getElementById('clean-list').innerHTML=co.length?co.map(r=>{
+    const k='c_'+r.aptId+'_'+r.checkOut;
+    if(!S.clean[k])S.clean[k]=CTASKS.map(()=>false);
+    const done=S.clean[k].filter(Boolean).length;
+    return`<div class="clcard">
+      <div class="cltop"><div><div style="font-size:13px;font-weight:600">${r.apt.split('·')[0].trim()}</div><div style="font-size:11px;color:var(--text2)">Checkout: ${fmt(r.checkOut)} · ${done}/${CTASKS.length} done</div></div><span class="bdg ${done===CTASKS.length?'bok':'bpd'}">${done===CTASKS.length?'Done ✓':'Pending'}</span></div>
+      ${CTASKS.map((t,i)=>`<div class="clrow${S.clean[k][i]?' done':''}"><input type="checkbox" ${S.clean[k][i]?'checked':''} onchange="tgCl('${k}',${i})">${t}</div>`).join('')}
+    </div>`;
+  }).join(''):'<div class="empty"><i class="ti ti-wash"></i>No upcoming checkouts<br>Add bookings to see cleaning tasks</div>';
+}
+function tgCl(k,i){if(!S.clean[k])S.clean[k]=CTASKS.map(()=>false);S.clean[k][i]=!S.clean[k][i];sv();rClean();}
+
+function rIcal(){
+  document.getElementById('ical-list').innerHTML=APTS.map(a=>{
+    const v=S.ical[a.id]||'';
+    return`<div class="ib"><div class="il">${a.no} · ${a.bldg} · ${a.res}</div>
+    <div class="ir"><input type="text" placeholder="Paste iCal URL..." value="${v}" id="ic-${a.id}"><button class="btn bsm bpri" onclick="svIc(${a.id})" style="flex-shrink:0">Save</button></div>
+    ${v?`<div class="isn"><i class="ti ti-check"></i> URL saved — syncing automatically</div>`:''}</div>`;
+  }).join('');
+}
+function svIc(id){const v=document.getElementById('ic-'+id).value.trim();S.ical[id]=v;sv();rIcal();if(v)toast('iCal saved for '+APTS.find(a=>a.id===id).no);}
+
+function rMsgs(){
+  document.getElementById('msg-list').innerHTML=MSGS.map((m,i)=>{
+    const lang=S.mLang[i]||'fr';
+    const exp=S.eMsg===i;
+    return`<div class="mc${exp?' exp':''}" onclick="tgMsg(${i})">
+      <div class="mt">${m.t}</div>
+      <div class="mp">${m[lang].split('\n')[0]}</div>
+      <div class="mb">${m[lang].replace(/</g,'&lt;').replace(/\n/g,'<br>')}
+        <div style="display:flex;gap:8px;align-items:center;margin-top:10px" onclick="event.stopPropagation()">
+          <div class="lt"><button class="lb${lang==='fr'?' on':''}" onclick="sLang(${i},'fr')">FR</button><button class="lb${lang==='en'?' on':''}" onclick="sLang(${i},'en')">EN</button></div>
+          <button class="btn bsm" onclick="cpMsg(${i})"><i class="ti ti-copy"></i> Copy</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function tgMsg(i){S.eMsg=S.eMsg===i?null:i;rMsgs();}
+function sLang(i,l){S.mLang[i]=l;rMsgs();}
+function cpMsg(i){const l=S.mLang[i]||'fr';navigator.clipboard.writeText(MSGS[i][l]).then(()=>toast('Copied to clipboard!'));}
+
+rDash();
+</script>
+</body>
+</html>
